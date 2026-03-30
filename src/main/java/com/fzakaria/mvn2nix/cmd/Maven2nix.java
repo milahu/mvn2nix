@@ -125,6 +125,9 @@ public class Maven2nix implements Callable<Integer> {
         if (!url.endsWith("/")) {
             url += "/";
         }
+        if (url.startsWith("/")) {
+            url = "file:" + url;
+        }
         try {
             return new URL(url + artifact.getLayout());
         } catch (MalformedURLException e) {
