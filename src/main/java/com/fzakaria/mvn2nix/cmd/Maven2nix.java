@@ -21,6 +21,8 @@ import picocli.CommandLine.Spec;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -146,6 +148,15 @@ public class Maven2nix implements Callable<Integer> {
      */
     public static boolean doesUrlExist(URL url) {
         try {
+            if (url.getProtocol().equals("file")) {
+                try {
+                    Path path = Paths.get(url.toURI());
+                    return java.nio.file.Files.exists(path);
+                } catch (java.net.URISyntaxException e) {
+                    return false;
+                }
+            }
+
             URLConnection urlConnection = url.openConnection();
             if (!(urlConnection instanceof HttpURLConnection)) {
                 return false;
